@@ -1,0 +1,27 @@
+AUDIO AMPLIFIER CIRCUIT
+Schematic Rev 2.0 - Component Values
+
+U1    TDA2030A        14W audio power amplifier IC TO-220-5
+R1    100R            Carbon resistor 1/4W 5%
+R2    22K             Carbon resistor 1/4W 5% 
+R3    2.7K            Carbon resistor 1/4W 5%
+R4    680R            Carbon resistor 1/4W 5%
+RV1   10K LOG         Potentiometer logarithmic 10kΩ
+C1    1000uF/25V      Electrolytic capacitor
+C2    100uF/16V       Electrolytic capacitor  
+C3    47nF             Polyester film capacitor
+C4    10nF             Ceramic capacitor
+C5    220uF/16V       Electrolytic capacitor
+C6    100nF            Ceramic capacitor X7R
+D1    1N4001          Rectifier diode 1A 50V
+D2    1N4001          Rectifier diode 1A 50V
+J1    RCA socket      Audio input connector
+J2    Speaker terminal 2-way binding post
+SW1   DPDT toggle     Power switch 250V 3A
+F1    1A slow blow    Fuse 20mm glass tube
+T1    12V-0-12V       Transformer 2A secondary
+BR1   W08M            Bridge rectifier 800V 1.5A
+
+Power consumption: 15W typical
+Input impedance: 47kΩ
+Output power: 14W RMS @ 8Ω

@@ -1,0 +1,132 @@
+# Product Requirement Document (PRD)
+
+**Product Name:** CircuitMind AI
+
+**Document Version:** 1.0.0
+
+**Target Domain:** Electronics & Semiconductor Assembly (PCBA Manufacturing)
+
+**Author:** Engineering Lead & Product Team
+
+---
+
+## 1. Executive Summary & Goals
+
+### 1.1 Problem Statement
+
+Modern printed circuit board assembly (PCBA) manufacturing relies on complex Bills of Materials (BOMs) containing hundreds of active components, passives, and microcontrollers. When a single $0.10 chip goes out of stock or faces a 16-week lead time, an entire $50,000 industrial build halts.
+
+Procurement teams currently spend 3–5 hours per line item manually reading 60-page PDF datasheets to cross-reference pinouts, operating voltages, thermal tolerances, and footprint dimensions. Existing tools (SAP, Octopart) provide static stock alerts but lack **semantic pin-to-pin substitution capabilities** and **automated multi-vendor purchase order execution**.
+
+### 1.2 Core Product Vision
+
+CircuitMind AI is an autonomous, agentic procurement platform that converts manual datasheet cross-referencing and multi-vendor checkout into a **10-second human-in-the-loop approval workflow**. By pairing multimodal Document AI with RAG-based vector search and FastMCP tool execution, CircuitMind AI intercepts component stockouts, identifies drop-in replacements, and generates optimized split purchase orders across global distributors.
+
+---
+
+## 2. Target Users & Persona Mapping
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        CORE USER PERSONAS                              │
+├───────────────────────────┬────────────────────────────────────────────┤
+│ Component Engineer        │ Procurement Manager                        │
+│ • Validates technical     │ • Manages supplier relationships & budgets │
+│   compatibility & specs   │ • Evaluates lead times & shipping costs    │
+│ • Needs: Pin-to-pin match │ • Needs: Optimized split PO generation     │
+└───────────────────────────┴────────────────────────────────────────────┘
+
+```
+
+---
+
+## 3. Key Feature Specifications & User Stories
+
+### 3.1 Feature Matrix
+
+| Feature Module | Core Capability | Technical Underpinnings |
+| --- | --- | --- |
+| **Multimodal BOM Parser** | Ingests unformatted PDFs, Excel files, and scanned invoice images; extracts structured MPNs, reference designators, and target quantities. | Document AI / LlamaParse, JSON Schema Validation |
+| **Semantic Pin-to-Pin Match Engine** | Performs RAG-based vector lookup across component datasheets to find drop-in replacements with exact footprint and spec tolerances. | PostgreSQL (`pgvector`), `SentenceTransformers` (`all-MiniLM-L6-v2`) |
+| **Agentic Purchase Order Arbitrage** | Calculates minimum total cost and minimum lead time across available distributors (DigiKey, Mouser, Arrow). | FastMCP Tool Execution, LangGraph Multi-Agent Orchestrator |
+| **Human-in-the-Loop Review Gate** | Surfaces interactive side-by-side spec comparison cards and requires user approval before PO finalization. | React / Next.js, WebSockets / Server-Sent Events |
+
+### 3.2 Key User Stories
+
+* **US-01 (Component Engineer):** *As a Component Engineer, I want the system to parse 50-page datasheets automatically so that I can see drop-in replacements with confidence scores without reading manual pinout diagrams.*
+* **US-02 (Procurement Manager):** *As a Procurement Manager, I want the system to calculate split purchase orders across multiple distributors so that I achieve the lowest combined shipping cost and fastest delivery time.*
+* **US-03 (System Operator):** *As an Operator, I want live progress logs streamed to my UI during execution so that I know exactly which agent is reviewing the BOM in real time.*
+
+---
+
+## 4. User Flow & System Architecture
+
+```
+[ User Uploads BOM (PDF/XLSX) ]
+              │
+              ▼
+┌────────────────────────────────────────────────────────┐
+│              FASTAPI & BULLMQ QUEUE LAYER              │
+│       (Pushes Job to Redis, Returns 202 Accepted)      │
+└─────────────────────────────┬──────────────────────────┘
+                              │
+                              ▼
+┌────────────────────────────────────────────────────────┐
+│            LANGGRAPH MULTI-AGENT WORKFLOW              │
+│                                                        │
+│  ┌──────────────────────┐    ┌──────────────────────┐  │
+│  │ 1. BOM Parser Agent  │───►│ 2. Market Check Agent│  │
+│  └──────────────────────┘    └──────────┬───────────┘  │
+│                                         │              │
+│                                         ▼              │
+│  ┌──────────────────────┐    ┌──────────────────────┐  │
+│  │ 4. PO Generator Agent│◄───│ 3. Alternate Agent   │  │
+│  └──────────────────────┘    │    (Vector RAG Search)│  │
+│                              └──────────────────────┘  │
+└─────────────────────────────┬──────────────────────────┘
+                              │
+                              ▼
+┌────────────────────────────────────────────────────────┐
+│             HUMAN-IN-THE-LOOP APPROVAL UI              │
+│    (User approves/overrides suggested substitutes)     │
+└────────────────────────────────────────────────────────┘
+
+```
+
+---
+
+## 5. Non-Functional Requirements (NFRs)
+
+* **Latency:** BOM parsing and initial stock checking must return within **< 5 seconds** for up to 100 line items. Vector search datasheet matching must execute within **< 2 seconds** per out-of-stock item.
+* **Reliability:** LangGraph agent state machines must feature an explicit `recursion_limit=5` to prevent infinite execution loops during external service drops.
+* **Accuracy:** Drop-in component substitution must achieve a minimum threshold of **>= 95% compatibility score** on voltage, pinout, and package footprint parameters before being presented to the user.
+* **Security & Auditability:** All human approval overrides and agent decisions must be recorded in an immutable PostgreSQL `audit_logs` table for compliance tracking.
+
+---
+
+## 6. Success Metrics & Key Performance Indicators (KPIs)
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                         PRODUCT SUCCESS KPIs                           │
+├──────────────────────────────────┬─────────────────────────────────────┤
+│ Processing Time Reduction        │ 90%+ drop in manual datasheet review│
+│                                  │ time (from 4 hours to < 10 seconds).│
+├──────────────────────────────────┼─────────────────────────────────────┤
+│ Resolution Rate                  │ 100% of flagged out-of-stock MPNs   │
+│                                  │ assigned a verified alternative.    │
+├──────────────────────────────────┼─────────────────────────────────────┤
+│ System End-to-End Reliability    │ 0 unhandled loop crashes during     │
+│                                  │ 7-day live testing & demo runs.     │
+└──────────────────────────────────┴─────────────────────────────────────┘
+
+```
+
+---
+
+## 7. Operational Roadmap & Milestone Execution Plan
+
+* **Sprint Phase 1 (Days 1–2):** Finalize Database Schema (PostgreSQL + `pgvector`), set up FastAPI endpoints, Redis message broker, and BullMQ task worker structure.
+* **Sprint Phase 2 (Days 3–4):** Deploy Document AI BOM parser, build FastMCP tools (`search_stock`, `find_vector_alternates`), and wire the LangGraph state machine.
+* **Sprint Phase 3 (Days 5–6):** Connect Next.js frontend to real-time WebSocket event streams, implement Human-in-the-Loop decision cards, and run synthetic data seeding scripts.
+* **Sprint Phase 4 (Day 7):** Code freeze, end-to-end Docker Compose environment validation, and final pitch deck presentation.

@@ -1,0 +1,62 @@
+```
++-------------------------------------------------------------------------------------------------------+
+|                                  CIRCUITMIND AI SYSTEM ARCHITECTURE                                   |
++-------------------------------------------------------------------------------------------------------+
+
+  [ USER / BROWSER ]
+          |
+          |  (1) Upload BOM File (PDF / XLSX / other formats)
+          v
+  +-----------------------------------------------------------------------------------------------------+
+  | FRONTEND DASHBOARD (Member 1 — Next.js / React)                                                     |
+  |  • File Drag-and-Drop Ingestion                                                                     |
+  |  • Real-Time Agent Execution Logs & Stream Viewer                                                   |
+  |  • Interactive Component Comparison & Human Approval Gate Modal                                     |
+  +-----------------------------------------------------------------------------------------------------+
+     |                                    ^                                    ^
+     | (2) POST /api/v1/bom/analyze       | (7) SSE Real-Time Stream Updates   | (9) POST /approve-action
+     v                                    |                                    |
+  +-----------------------------------------------------------------------------------------------------+
+  | API GATEWAY & QUEUE MANAGER (Member 3 — FastAPI & Redis / BullMQ)                                   |
+  |  • Receives Uploads & Returns Immediate HTTP 202 Accepted                                           |
+  |  • Pushes Jobs to Redis Task Queue ("bom-processing-queue")                                         |
+  |  • Manages Event Streaming via Server-Sent Events (SSE) Router                                      |
+  +-----------------------------------------------------------------------------------------------------+
+          |                                                                    ^
+          | (3) Pulls Background Job                                           | (6) Emits Progress
+          v                                                                    |     & Interrupts
+  +-----------------------------------------------------------------------------------------------------+
+  | MULTI-AGENT EXECUTION ENGINE (Member 5 — LangGraph & FastMCP Server)                                |
+  |                                                                                                     |
+  |   +-------------------+       +-------------------+       +-------------------------------------+   |
+  |   | 1. BOM Parser     | ----> | 2. Market Check   | ----> | 3. Alternate Match Agent            |   |
+  |   |    Agent          |       |    Agent          |       |    (Vector RAG Search)              |   |
+  |   +-------------------+       +-------------------+       +-------------------------------------+   |
+  |             ^                                                                |                      |
+  |             | Parses Files                                                   v                      |
+  |   +-------------------+       +-------------------+       +-------------------------------------+   |
+  |   | 5. PO Generator   | <---- | 4. Human Approval | <---- | Intercepts & Pauses Execution       |   |
+  |   |    Agent          |       |    Gate (Resume)  |       | (If Out-of-Stock Flagged)           |   |
+  |   +-------------------+       +-------------------+       +-------------------------------------+   |
+  +-----------------------------------------------------------------------------------------------------+
+          |                                       |
+          | (4) Send File Bytes                   | (5) Query / Write Operations
+          v                                       v
+  +-----------------------------------+   +-------------------------------------------------------------+
+  | UNSTRUCTURED DATA AI (Member 4)   |   | DATABASE LAYER (Member 2 — PostgreSQL + pgvector)           |
+  |  • PDF / Image OCR Extraction     |   |  • Component Vector Embeddings (384-dim SentenceTransformer)|
+  |  • Text Chunking & Embedding Gen  |   |  • Relational Schema (BOMs, Suppliers, Multi-Vendor Stock)  |
+  |  • Vector Search Query Interface  |   |  • Transaction Audit Logs & Decision Override History       |
+  +-----------------------------------+   +-------------------------------------------------------------+
+
+```
+
+---
+
+**Key Technical Flow**
+
+1. **Upload & Queue:** The user uploads a BOM via Next.js. FastAPI pushes the job to BullMQ/Redis and immediately returns a `job_id`.
+2. **Async Agent Stream:** BullMQ triggers the LangGraph Multi-Agent Engine. Real-time execution logs stream back to the UI via Server-Sent Events (SSE).
+3. **Data Extraction & Vector RAG:** Document AI parses component line items, while `pgvector` in PostgreSQL executes semantic similarity searches for drop-in component substitutes.
+4. **Human Interception:** If a stockout is detected, LangGraph triggers an interrupt, displaying a side-by-side spec comparison card in the UI.
+5. **Approval & PO Finalization:** Clicking **Approve** resumes the graph, running the PO Generator Agent to save multi-vendor split orders directly to the database.

@@ -1,0 +1,22 @@
+LED Driver Circuit - Component List
+
+R1: 330R 0603 - Current limiting for LED
+R2: 10K 0603 - Pull-up resistor
+R3: 1K 0603 - Base resistor
+
+Q1: BC547 - NPN transistor for switching
+Q2: IRLZ44N - N-channel MOSFET high current
+
+C1: 100nF 0603 - Decoupling capacitor
+C2: 470uF 16V - Bulk capacitor
+
+D1: 1N4148 - Protection diode
+LED1: High power LED 3W white
+
+J1: Terminal block 2-pin
+SW1: Momentary push button
+
+IC1: LM555 - Timer IC
+IC2: LM7805 - 5V regulator
+
+Total: 13 components

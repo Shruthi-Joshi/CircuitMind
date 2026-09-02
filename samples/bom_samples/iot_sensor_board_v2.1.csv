@@ -1,0 +1,33 @@
+Reference,MPN,Qty,Description,Manufacturer,Package,Value
+U1,STM32F411CEU6,1,ARM Cortex-M4 microcontroller 32-bit 100MHz UFQFPN48,STMicroelectronics,UFQFPN-48,
+U2,ESP32-S3-WROOM-1,1,WiFi 802.11 b/g/n + Bluetooth 5 SoC module,Espressif Systems,LGA-41,
+U3,AP2112K-3.3TRG1,1,3.3V 600mA ultra low dropout linear regulator,Diodes Incorporated,SOT-23-5,3.3V
+U4,LM358DR,1,Dual operational amplifier low power,Texas Instruments,SOIC-8,
+U5,CP2102N-A01-GQFN28,1,USB to UART bridge controller,Silicon Labs,QFN-28,
+C1,GRM188R71C104KA01D,4,Multilayer ceramic capacitor X7R 16V,Murata,0603,100nF
+C2,CL10B105KB8NNNC,2,Multilayer ceramic capacitor X7R 50V,Samsung,0603,1µF
+C3,TAJB226K016RNJ,2,Tantalum capacitor 16V 20%,AVX,CASE-B,22µF
+C4,CC0603KRX7R9BB102,6,Ceramic capacitor X7R 50V 10%,Yageo,0603,1nF
+C5,GCM1885C1H180JA16D,2,Multilayer ceramic capacitor C0G 50V,Murata,0603,18pF
+L1,MLZ2012M1R0WT000,1,Ferrite bead 1R 2A 0805,TDK,0805,1R @100MHz
+L2,LQG15HN56NJ02D,2,Multilayer ceramic inductor 56nH,Murata,0402,56nH
+R1,RC0603FR-0710KL,4,Thick film resistor 1% 1/10W,Yageo,0603,10kΩ
+R2,CRCW06034K70FKEA,2,Thick film resistor 1% 1/10W,Vishay,0603,4.7kΩ
+R3,ERJ-3EKF1001V,2,Thick film resistor 1% 1/10W,Panasonic,0603,1kΩ
+R4,RC0603JR-0722RL,4,Thick film resistor 5% 1/10W,Yageo,0603,22Ω
+R5,RMCF0603ZT0R00,2,Thick film resistor jumper 1/10W,Stackpole,0603,0Ω
+D1,BAT54S,2,Schottky diode dual series 30V,Infineon,SOT-23,
+D2,PMEG3005EJ,1,Schottky barrier rectifier 30V,Nexperia,SOD-323,
+D3,1N4148W-7-F,4,Fast switching diode 75V,Diodes Inc,SOD-123,
+LED1,LTST-C170TBKT,1,LED blue 470nm 20mA,Lite-On,0603,Blue
+LED2,LTST-C170KRKT,1,LED red 625nm 20mA,Lite-On,0603,Red
+SW1,FSM4JSMATR,1,Tactile switch SPST-NO 50mA,TE Connectivity,4.2x3.2mm,
+SW2,CUS-12TB,1,Tactile switch SPST-NO 50mA,NKK Switches,6x6mm,
+J1,USB4110-GF-A,1,USB Type-C receptacle 24 position,GCT,USB-C,
+J2,S2B-PH-K-S(LF)(SN),1,Connector header 2 position 2mm,JST,PH-2,
+J3,61300211121,1,Header connector 6 position 2.54mm,Würth Elektronik,2.54mm,
+Y1,ABM8-272-T3,1,Crystal 8MHz ±20ppm 20pF,Abracon,3.2x2.5mm,8MHz
+Y2,FC-135 32.7680KA-A3,1,Crystal 32.768kHz ±20ppm 12.5pF,Epson,3.2x1.5mm,32.768kHz
+F1,0ZCG0050FF2G,1,PTC resettable fuse 500mA 6V,Bel Fuse,0603,500mA
+TP1,5016,4,Test point miniature PCB mount,Keystone,1mm,
+FB1,BLM18PG221SN1D,2,Ferrite bead 220Ω 1.6A 0603,Murata,0603,220Ω @100MHz
